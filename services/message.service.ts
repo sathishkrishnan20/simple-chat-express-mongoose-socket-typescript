@@ -1,16 +1,19 @@
 import express = require('express');
-//const router = express.Router();
 let router = express.Router();
 import MessageModel from '../schemas/Message';
 import { IMessage } from '../schemas/IMessage';
 import { ObjectID } from 'bson';
+import io from '../server';
 
 const getMessagesByConversationId = async(request: any, response: any) => {
    try {
     const conversationId = request.params.conversationId;
+    const queryParams = request.query;
     let messages = await MessageModel.find({ 
         conversation_id: new ObjectID(conversationId)
-    }).sort({ created_at: -1 });
+    }).skip(parseInt(queryParams.skip) || 0)
+      .limit(parseInt(queryParams.limit || 0 ))
+      .sort({ created_at: -1 });
     response.send({
         success: messages.length > 0 ? true : false,
         data: messages
@@ -42,14 +45,23 @@ const insertMessage = async(request: any, response: any) => {
             sender_id: requestData.sender_id,
             created_at: new Date(),
             updated_at: new Date()
-        } 
+        }
         var messageModelData = new MessageModel(messageData);
         const savedResult = await messageModelData.save();       // mongoose Document methods are available
+        console.log('data saved');
+        
+        io.emit('message', messageData)
+            
+                console.log('emiiting the message');
+       
         console.log(savedResult);
-        response.send({
+          response.send({
             success: true,
             chatId: savedResult._id
-        })
+          })
+        
+       
+    
       } catch (err) {
         console.log('err' + err);
         response.status(500).send({

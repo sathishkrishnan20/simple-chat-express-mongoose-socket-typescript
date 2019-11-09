@@ -32,8 +32,8 @@ if (PRODUCTION) {
   }
 } else if (DEVELOPMENT) {
   config.express = {
-    port: 4000,
-    ip: 'localhost'
+    port: 3000,
+    ip: '192.168.1.3'
   }
   config.mongodb = {
     port: process.env.MONGODB_PORT || 27017,
