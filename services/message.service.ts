@@ -70,7 +70,7 @@ Sample Request for creating the chat
             }
             var messageModelData = new MessageModel(messageData);
             messageModelData.save();       // mongoose Document methods are available
-            io.emit('message', messageData)
+            io.emit(requestData.conversation_id + '-message', messageData)
             response.send({
                 success: true,
             })
