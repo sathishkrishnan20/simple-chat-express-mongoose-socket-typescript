@@ -17,37 +17,54 @@ Simple chat Application
 
 Sample Request 
 
- 1. Start the Conversation 
- endpoint: api/conversation [POST]
- request JSON
+ 1. Start the Conversation
+    
+    Endpoint: api/conversation [POST]
+ 
+ *  Request
+```
     {
 	    "members": [
 		    { "member_id": "5dc7bae0d2d91a7d968441e9"  }, //MongoId
 		    { "member_id":"5dc7ba8abc09b57d92876916" }
 	    ]
     }
-Response 
+```
+* Response 
+```
     {
         "success": true,
         "conversationId": "5dc82f566572b28456d3101a"
     }  
+```
 
 2. Send the Message
-endpoint: api/message [POST]
-Requset   
+
+   Endpoint: api/message [POST]
+
+* Requset   
+```
     {
 	    "conversation_id": "5dc7ca758abf197f448cf939",
         "member_id": "5dc7ba8abc09b57d92876916",
         "message": "Sixth Message From Krish"
     }
-Response 
+```
+
+* Response 
+```
     {
         "success": true
     }
+```
+
 
 3. Get the conversationId with the last message of the conversation
-Endpoint: api/conversations/member/[MEMBERID]
-Response 
+
+   Endpoint: api/conversations/member/[MEMBERID]
+
+*  Response 
+```
 {
     "success": true,
     "data": [
@@ -91,9 +108,14 @@ Response
         }
     ]
 } 
+```
 
-get the messages of the conversation
-endpoint : api/conversation/[CONVERSATIONID]/messages?skip=0&limit=25
+4. Get the messages of the conversation
+
+   Endpoint : api/conversation/[CONVERSATIONID]/messages?skip=0&limit=25
+
+*  Response
+```
 {
     "success": true,
     "data": [
@@ -124,6 +146,7 @@ endpoint : api/conversation/[CONVERSATIONID]/messages?skip=0&limit=25
         }
     ]
 }
+```
 
 PostMan test Link 
 https://www.getpostman.com/collections/a642af9f584d72e10077
