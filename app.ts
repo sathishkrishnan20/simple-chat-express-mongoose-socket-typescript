@@ -22,7 +22,6 @@ class App {
   }
   private initializeMiddlewares() {
      this.app.use(bodyParser.json());
-     
   }
   private initializeControllers(controllers : any) {
     controllers.forEach((controller : any) => {

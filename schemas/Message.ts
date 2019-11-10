@@ -2,7 +2,7 @@ import { model, Model, Schema , Document} from 'mongoose';
 import { ObjectID } from 'bson';
 interface IMessage extends Document {
   conversation_id: ObjectID,
-  sender_id: ObjectID,
+  member_id: ObjectID,
   created_at?: Date,
   updated_at?: Date,
   message: String,
@@ -13,7 +13,7 @@ const MessageSchema: Schema = new Schema({
     type: Schema.Types.ObjectId,
     required: true
   },
-  sender_id: {
+  member_id: {
     type: Schema.Types.ObjectId,
     required: true
   },

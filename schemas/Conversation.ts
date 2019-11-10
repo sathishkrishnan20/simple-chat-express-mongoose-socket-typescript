@@ -10,7 +10,7 @@ interface IConversation extends Document {
 let ConversationSchema: Schema = new Schema({
   members: [{
     _id : false,
-    member_id: { type: Schema.Types.ObjectId, unique: true },
+    member_id: { type: Schema.Types.ObjectId, required: true },
   }],
   created_at: Schema.Types.Date
 });

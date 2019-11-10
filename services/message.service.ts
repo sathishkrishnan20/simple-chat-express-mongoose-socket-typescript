@@ -21,11 +21,16 @@ class MessageService {
              conversation_id: new ObjectID(conversationId)
          }).skip(parseInt(queryParams.skip) || 0)
            .limit(parseInt(queryParams.limit || 0 ))
-           .sort({ created_at: -1 });
-         response.send({
+           .sort({ created_at: -1 }).select({
+                _id: 0,
+                message: 1,
+                created_at: 1,
+                member_id: 1
+           });
+           response.send({
              success: messages.length > 0 ? true : false,
              data: messages
-         });
+           });
      } catch (err) {
          console.log('err' + err);
          response.status(500).send({
@@ -36,24 +41,15 @@ class MessageService {
          
      }
 
-/* 
-Sample Request for creating the chat
-{
-    conversation_id: String,
-    message: String,
-    sender_id: String
-} 
-*/
-
     insertMessage = async(request: any, response: any) => {
         try {
             const requestData = request.body;  
             const conversationId = new ObjectID(requestData.conversation_id);
-            const senderId = new ObjectID(requestData.sender_id);
+            const memberId = new ObjectID(requestData.member_id);
             
              let conversationModelResp = await ConversationModel.findOne({ 
                  _id: new ObjectID(conversationId)
-             }).where({ "members.member_id" : senderId })
+             }).where({ "members.member_id" : memberId })
              console.log(conversationModelResp);
              if(conversationModelResp === null) {
                return response.status(401).send({
@@ -63,14 +59,14 @@ Sample Request for creating the chat
              }             
              const messageData = {
                 conversation_id: conversationId,
-                sender_id: senderId,
+                member_id: memberId,
                 message: requestData.message,
                 created_at: new Date(),
                 updated_at: new Date(),
             }
             var messageModelData = new MessageModel(messageData);
             messageModelData.save();       // mongoose Document methods are available
-            io.emit('message', messageData)
+            io.emit(requestData.conversation_id + '-message', messageData)
             response.send({
                 success: true,
             })
@@ -81,7 +77,6 @@ Sample Request for creating the chat
                 success: false
             })
           }
-    }
-    
+    }   
 }
 export default MessageService;
