@@ -1,5 +1,5 @@
 import * as express from 'express';
-import ConversationModel from '../schemas/Conversation';
+import { ConversationModel } from '../schemas/Conversation';
 
 class ConversationService {
     public router = express.Router();
@@ -19,8 +19,8 @@ createConversation = async(request: express.Request, response: express.Response)
       console.log('is it comign');
       const requestData = request.body;  
       var conversation = new ConversationModel({
-              connections: requestData.connections,
-              created_at: new Date(),
+            members: requestData.members,
+            created_at: new Date(),
       });
       const savedResult = await conversation.save();       // mongoose Document methods are available
       console.log(savedResult);

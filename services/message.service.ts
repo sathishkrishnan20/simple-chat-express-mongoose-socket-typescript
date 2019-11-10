@@ -1,6 +1,6 @@
 import express = require('express');
-import MessageModel from '../schemas/Message';
-import { IMessage } from '../schemas/IMessage';
+import { MessageModel } from '../schemas/Message';
+import { ConversationModel } from '../schemas/Conversation';
 import { ObjectID } from 'bson';
 import io from '../server';
 class MessageService {
@@ -48,23 +48,32 @@ Sample Request for creating the chat
     insertMessage = async(request: any, response: any) => {
         try {
             const requestData = request.body;  
-            const messageData = {
-                conversation_id: requestData.conversation_id,
+            const conversationId = new ObjectID(requestData.conversation_id);
+            const senderId = new ObjectID(requestData.sender_id);
+            
+             let conversationModelResp = await ConversationModel.findOne({ 
+                 _id: new ObjectID(conversationId)
+             }).where({ "members.member_id" : senderId })
+             console.log(conversationModelResp);
+             if(conversationModelResp === null) {
+               return response.status(401).send({
+                    success: false,
+                    message: 'You are not allowed to Chat'
+                })
+             }             
+             const messageData = {
+                conversation_id: conversationId,
+                sender_id: senderId,
                 message: requestData.message,
-                sender_id: requestData.sender_id,
                 created_at: new Date(),
-                updated_at: new Date()
+                updated_at: new Date(),
             }
             var messageModelData = new MessageModel(messageData);
-            const savedResult = await messageModelData.save();       // mongoose Document methods are available
-            console.log('data saved');
-            
+            messageModelData.save();       // mongoose Document methods are available
             io.emit('message', messageData)
-            console.log(savedResult);
-              response.send({
+            response.send({
                 success: true,
-                chatId: savedResult._id
-              })
+            })
         } catch (err) {
             console.log('err' + err);
             response.status(500).send({

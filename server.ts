@@ -3,7 +3,7 @@ import App from './app';
 import config from './config';
 import socketIo =  require('socket.io');
 import { createServer } from 'http';
-import ConversationService from './services/chat.service';
+import ConversationService from './services/conversation.service';
 import MessageService from './services/message.service';
 import Connect from "./dbconnect";
 

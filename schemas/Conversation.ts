@@ -1,13 +1,23 @@
-import { model, Model, Schema } from 'mongoose';
-import { IConversation } from './IConversation';
-var ConversationSchema: Schema = new Schema({
-  connections: [{
-    type: String,
-    required: true
+import { model, Model, Schema, Document } from 'mongoose';
+
+interface IConversation extends Document {
+  members: [{
+      member_id: { type: Schema.Types.ObjectId, required: true },
+  }],
+  type: String,
+  created_at:  Schema.Types.Date;
+}
+let ConversationSchema: Schema = new Schema({
+  members: [{
+    _id : false,
+    member_id: { type: Schema.Types.ObjectId, unique: true },
   }],
   created_at: Schema.Types.Date
 });
 
-var ConversationModel: Model<IConversation> = model<IConversation>('conversation', ConversationSchema);
-export = ConversationModel 
+let ConversationModel: Model<IConversation> = model<IConversation>('conversation', ConversationSchema);
+export { 
+  ConversationModel,
+  IConversation
+}
 
