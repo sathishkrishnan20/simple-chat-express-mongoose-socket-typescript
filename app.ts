@@ -1,27 +1,42 @@
 #!/usr/bin/env node
 
 import express = require('express');
-const app: express.Application = express();
+//const app: express.Application = express();
 const bodyParser = require('body-parser');
-const connect = require("./dbconnect");
+
+import { createServer, Server } from 'http';
 //require the http module
+class App {
+  public app: express.Application;
+  public server: Server = new Server; 
+  public port: number;
+  public ip: string;
+  constructor(controllers:any[] , host: string, port: number) {
+    this.app = express();
+    this.ip = host;
+    this.port = port;
 
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
-app.use(bodyParser.json())
-
-app.use(function (req, res, next) {
-
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,x-access-token, userId,doctorId,adminId');
-    next();
-});
-
-
-
-app.use('/api', require('./services/chat.service'));
-app.use('/api', require('./services/message.service'));
-
-export = app;
+    this.initializeMiddlewares();
+    this.initializeControllers(controllers);
+    this.createServer();
+  }
+  private initializeMiddlewares() {
+     this.app.use(bodyParser.json());
+     
+  }
+  private initializeControllers(controllers : any) {
+    controllers.forEach((controller : any) => {
+      this.app.use('/api', controller.router);
+    });
+  }
+  createServer() {
+    this.server = createServer(this.app)
+  }
+  public listen() {
+    this.server.listen(this.port, this.ip, () => {
+      console.info('express is listening on http://' +
+     this.ip + ':' +this.port)
+  });
+  }
+}
+export default App;

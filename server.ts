@@ -1,16 +1,24 @@
 
-import app from './app';
+import App from './app';
 import config from './config';
 import socketIo =  require('socket.io');
 import { createServer } from 'http';
-var server = createServer(app);
+import ConversationService from './services/chat.service';
+import MessageService from './services/message.service';
+import Connect from "./dbconnect";
 
-server.listen(config.express.port, config.express.ip, () => {
-    console.info('express is listening on http://' +
-    config.express.ip + ':' + config.express.port)
-});
+const mongoConnect = new Connect(config.mongodb.host,config.mongodb.port,config.mongodb.database);
+mongoConnect.connect();
+const app = new App([
+      new ConversationService(),
+      new MessageService
+    ],
+    config.express.ip,
+    config.express.port
+);
 
-let io : SocketIO.Server = socketIo(server)
+app.listen();  
+let io : SocketIO.Server = socketIo(app.server)
 io.on('connect', (socket: any) => {
   console.log('Connected client on port.');
 

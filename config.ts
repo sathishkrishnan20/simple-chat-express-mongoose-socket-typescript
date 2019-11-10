@@ -1,5 +1,5 @@
 
-/* var PRODUCTION = process.env.NODE_ENV === 'production';
+/*var PRODUCTION = process.env.NODE_ENV === 'production';
 var TEST = process.env.NODE_ENV === 'test';
 var QA = process.env.NODE_ENV === 'qa'; */
 var DEVELOPMENT = process.env.NODE_ENV === 'development';
@@ -24,7 +24,6 @@ if (DEVELOPMENT) {
     host: process.env.MONGODB_HOST || 'localhost',
     database: process.env.MONGODB || 'chat-dev'
   }
-
 }
 
 export default config;
